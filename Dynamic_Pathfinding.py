@@ -158,3 +158,38 @@ class PathfindingApp:
     def set_mode(self, mode):
         self.edit_mode = mode
         self.info.config(text="Edit Mode: " + mode)
+
+
+    def random_map(self, density=0.3):
+        r = 0
+        while r < self.rows:
+            c = 0
+            while c < self.cols:
+                if (r, c) != self.start and (r, c) != self.goal:
+                    if random.random() < density:
+                        self.grid[r][c] = 1
+                    else:
+                        self.grid[r][c] = 0
+                c += 1
+            r += 1
+        self.draw_grid()
+        
+    def heuristic(self, a, b):
+        if self.heuristic_type == "Euclidean":
+            return math.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2)
+        else:
+            return abs(a[0]-b[0]) + abs(a[1]-b[1])
+
+    def neighbors(self, r, c):
+        result = []
+
+        if r+1 < self.rows and self.grid[r+1][c] == 0:
+            result.append((r+1, c))
+        if r-1 >= 0 and self.grid[r-1][c] == 0:
+            result.append((r-1, c))
+        if c+1 < self.cols and self.grid[r][c+1] == 0:
+            result.append((r, c+1))
+        if c-1 >= 0 and self.grid[r][c-1] == 0:
+            result.append((r, c-1))
+
+        return result
