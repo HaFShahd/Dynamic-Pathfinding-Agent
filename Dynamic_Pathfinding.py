@@ -56,3 +56,30 @@ class PathfindingApp:
 
         self.draw_grid()
         self.create_buttons()
+
+
+    def draw_grid(self):
+        self.canvas.delete("all")
+
+        r = 0
+        while r < self.rows:
+            c = 0
+            while c < self.cols:
+                color = "white"
+
+                if self.grid[r][c] == 1:
+                    color = "black"
+
+                if (r, c) == self.start:
+                    color = "orange"
+
+                if (r, c) == self.goal:
+                    color = "purple"
+
+                self.canvas.create_rectangle(
+                    c * CELL_SIZE, r * CELL_SIZE,
+                    (c + 1) * CELL_SIZE, (r + 1) * CELL_SIZE,
+                    fill=color, outline="gray"
+                )
+                c += 1
+            r += 1
