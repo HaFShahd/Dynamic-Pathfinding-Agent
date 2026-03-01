@@ -274,3 +274,47 @@ class PathfindingApp:
                 if (r,c) in remaining_path:
                     return True
         return False
+  # ================= MAIN =================
+    def start_search(self):
+        self.draw_grid()
+        self.agent_pos = self.start
+        total_visited = 0
+        total_time = 0
+
+        while self.agent_pos != self.goal:
+            path, visited_count, exec_time = self.search(self.agent_pos)
+            total_visited += visited_count
+            total_time += exec_time
+            if path is None:
+                self.info.config(text="No Path Found!")
+                return
+
+            i = 1
+            while i < len(path):
+                step = path[i]
+                self.agent_pos = step
+                remaining_path = path[i:]
+                blocked = self.spawn_obstacle(remaining_path)
+                self.draw_grid()
+                self.color_cell(self.agent_pos, "cyan")
+                self.root.update()
+                time.sleep(0.05)
+                if blocked:
+                    break
+                i += 1
+
+            if self.agent_pos == self.goal:
+                self.draw_path(path)
+                self.info.config(
+                    text=f"Visited: {total_visited} | Cost: {len(path)} | Time: {round(total_time,2)} ms"
+                )
+                return
+
+
+
+root = tk.Tk()
+root.title("Dynamic Pathfinding Agent")
+
+app = PathfindingApp(root, 20, 20)
+
+root.mainloop()
