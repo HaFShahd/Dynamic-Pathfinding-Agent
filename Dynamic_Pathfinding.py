@@ -81,9 +81,6 @@ class PathfindingApp:
                     (c + 1) * CELL_SIZE, (r + 1) * CELL_SIZE,
                     fill=color, outline="gray"
                 )
-                c += 1
-            r += 1
-
 
     def toggle_wall(self, event):
         r = event.y // CELL_SIZE
@@ -151,20 +148,36 @@ class PathfindingApp:
         self.info.config(text="Edit Mode: " + mode)
 
 
-    def random_map(self, density=0.3):
-        r = 0
-        while r < self.rows:
-            c = 0
-            while c < self.cols:
+    def random_map_user(self):
+        try:
+            rows = int(self.rows_var.get())
+            cols = int(self.cols_var.get())
+            density = float(self.density_var.get()) / 100.0
+            if rows <= 0 or cols <= 0 or not (0 <= density <= 1):
+                raise ValueError
+        except ValueError:
+            self.info.config(text="Invalid input! Rows, Cols > 0, Density 0-100.")
+            return
+
+        self.rows = rows
+        self.cols = cols
+        self.start = (0, 0)
+        self.goal = (rows - 1, cols - 1)
+        self.agent_pos = self.start
+        self.grid = [[0 for i in range(cols)] for i in range(rows)]
+
+        # Resize canvas
+        self.canvas.config(width=self.cols * CELL_SIZE, height=self.rows * CELL_SIZE)
+
+        # Fill random obstacles
+        for r in range(rows):
+            for c in range(cols):
                 if (r, c) != self.start and (r, c) != self.goal:
                     if random.random() < density:
                         self.grid[r][c] = 1
-                    else:
-                        self.grid[r][c] = 0
-                c += 1
-            r += 1
+
         self.draw_grid()
-        
+        self.info.config(text=f"Random map {rows}x{cols}, density {density*100:.0f}%")
     def heuristic(self, a, b):
         if self.heuristic_type == "Euclidean":
             return math.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2)
