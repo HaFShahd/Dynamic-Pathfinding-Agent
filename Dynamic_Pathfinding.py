@@ -178,6 +178,7 @@ class PathfindingApp:
 
         self.draw_grid()
         self.info.config(text=f"Random map {rows}x{cols}, density {density*100:.0f}%")
+    
     def heuristic(self, a, b):
         if self.heuristic_type == "Euclidean":
             return math.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2)
@@ -186,22 +187,15 @@ class PathfindingApp:
 
     def neighbors(self, r, c):
         result = []
-
-        if r+1 < self.rows and self.grid[r+1][c] == 0:
-            result.append((r+1, c))
-        if r-1 >= 0 and self.grid[r-1][c] == 0:
-            result.append((r-1, c))
-        if c+1 < self.cols and self.grid[r][c+1] == 0:
-            result.append((r, c+1))
-        if c-1 >= 0 and self.grid[r][c-1] == 0:
-            result.append((r, c-1))
-
+        for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:
+            nr, nc = r+dr, c+dc
+            if 0 <= nr < self.rows and 0 <= nc < self.cols and self.grid[nr][nc] == 0:
+                result.append((nr, nc))
         return result
-
+    
     # ================= SEARCH =================
     def search(self, start_pos):
         start_time = time.time()
-
         nodes = {}
         open_list = []
         visited = set()
@@ -214,18 +208,13 @@ class PathfindingApp:
         start_node = get_node(start_pos)
         start_node.g = 0
         start_node.h = self.heuristic(start_pos, self.goal)
-
-        if self.algorithm == "GBFS":
-            start_node.f = start_node.h
-        else:
-            start_node.f = start_node.g + start_node.h
+        start_node.f = start_node.h if self.algorithm == "GBFS" else start_node.g + start_node.h
 
         heapq.heappush(open_list, start_node)
 
-        while len(open_list) > 0:
+        while open_list:
             current = heapq.heappop(open_list)
             pos = (current.r, current.c)
-
             if pos in visited:
                 continue
             visited.add(pos)
@@ -236,49 +225,39 @@ class PathfindingApp:
             if pos == self.goal:
                 path = []
                 temp = current
-                while temp is not None:
+                while temp:
                     path.insert(0, (temp.r, temp.c))
                     temp = temp.parent
+                return path, len(visited), (time.time() - start_time)*1000
 
-                exec_time = (time.time() - start_time) * 1000
-                return path, len(visited), exec_time
-
-            nbrs = self.neighbors(current.r, current.c)
-
-            i = 0
-            while i < len(nbrs):
-                nbr = nbrs[i]
+            for nbr in self.neighbors(current.r, current.c):
                 neighbor = get_node(nbr)
-
                 tentative_g = current.g + 1
-
                 if tentative_g < neighbor.g:
                     neighbor.g = tentative_g
                     neighbor.h = self.heuristic(nbr, self.goal)
                     neighbor.parent = current
-
-                    if self.algorithm == "GBFS":
-                        neighbor.f = neighbor.h
-                    else:
-                        neighbor.f = neighbor.g + neighbor.h
-
+                    neighbor.f = neighbor.h if self.algorithm=="GBFS" else neighbor.g + neighbor.h
                     heapq.heappush(open_list, neighbor)
-
                     if nbr != self.start and nbr != self.goal:
                         self.color_cell(nbr, "yellow")
 
-                i += 1
-
             self.root.update()
             time.sleep(0.01)
-
         return None, len(visited), 0
 
     def color_cell(self, pos, color):
-        r = pos[0]
-        c = pos[1]
+        r, c = pos
         self.canvas.create_rectangle(
             c * CELL_SIZE, r * CELL_SIZE,
             (c + 1) * CELL_SIZE, (r + 1) * CELL_SIZE,
             fill=color, outline="gray"
         )
+
+
+    def draw_path(self, path):
+        for pos in path:
+            if pos != self.start and pos != self.goal:
+                self.color_cell(pos, "green")
+                self.root.update()
+                time.sleep(0.02)
