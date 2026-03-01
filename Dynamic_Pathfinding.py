@@ -141,3 +141,20 @@ class PathfindingApp:
 
         tk.Button(frame, text="Draw Walls",
                   command=lambda: self.set_mode("wall")).pack(side=tk.LEFT)
+
+
+    def set_algo(self, algo):
+        self.algorithm = algo
+        self.info.config(text="Algorithm: " + algo)
+
+    def set_heuristic(self, h):
+        self.heuristic_type = h
+        self.info.config(text="Heuristic: " + h)
+
+    def toggle_dynamic(self):
+        self.dynamic_mode = not self.dynamic_mode
+        self.info.config(text="Dynamic Mode: " + str(self.dynamic_mode))
+
+    def set_mode(self, mode):
+        self.edit_mode = mode
+        self.info.config(text="Edit Mode: " + mode)
