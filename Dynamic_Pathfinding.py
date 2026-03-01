@@ -261,3 +261,16 @@ class PathfindingApp:
                 self.color_cell(pos, "green")
                 self.root.update()
                 time.sleep(0.02)
+                
+    def spawn_obstacle(self, remaining_path):
+        if not self.dynamic_mode:
+            return False
+        if random.random() < 0.12:
+            r = random.randint(0, self.rows-1)
+            c = random.randint(0, self.cols-1)
+            if (r,c) != self.start and (r,c) != self.goal and (r,c) != self.agent_pos and self.grid[r][c]==0:
+                self.grid[r][c] = 1
+                self.draw_grid()
+                if (r,c) in remaining_path:
+                    return True
+        return False
