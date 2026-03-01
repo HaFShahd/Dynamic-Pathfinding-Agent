@@ -23,7 +23,7 @@ The agent supports the following features:
 
 - Python 3.6 or higher
 - Tkinter (usually comes pre-installed with Python)
-- Standard libraries: `random`, `time`, `heapq`, `math`
+- Standard libraries: random, time, heapq, math
 
 
 ## Installation
@@ -44,7 +44,7 @@ cd <repository-folder>
 ## Running the Application
 
 1. Open a terminal or command prompt.
-2. Navigate to the folder containing `Dynamic_Pathfinding.py`.
+2. Navigate to the folder containing Dynamic_Pathfinding.py.
 3. Run the program:
 
 python Dynamic_Pathfinding.py
