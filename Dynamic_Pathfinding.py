@@ -106,3 +106,38 @@ class PathfindingApp:
                 self.goal = (r, c)
 
         self.draw_grid()
+
+
+    def create_buttons(self):
+        frame = tk.Frame(self.root)
+        frame.pack()
+
+        tk.Button(frame, text="Random Map",
+                  command=self.random_map).pack(side=tk.LEFT)
+
+        tk.Button(frame, text="Start Search",
+                  command=self.start_search).pack(side=tk.LEFT)
+
+        tk.Button(frame, text="Toggle Dynamic",
+                  command=self.toggle_dynamic).pack(side=tk.LEFT)
+
+        tk.Button(frame, text="Use GBFS",
+                  command=lambda: self.set_algo("GBFS")).pack(side=tk.LEFT)
+
+        tk.Button(frame, text="Use A*",
+                  command=lambda: self.set_algo("A*")).pack(side=tk.LEFT)
+
+        tk.Button(frame, text="Manhattan",
+                  command=lambda: self.set_heuristic("Manhattan")).pack(side=tk.LEFT)
+
+        tk.Button(frame, text="Euclidean",
+                  command=lambda: self.set_heuristic("Euclidean")).pack(side=tk.LEFT)
+
+        tk.Button(frame, text="Set Start",
+                  command=lambda: self.set_mode("start")).pack(side=tk.LEFT)
+
+        tk.Button(frame, text="Set Goal",
+                  command=lambda: self.set_mode("goal")).pack(side=tk.LEFT)
+
+        tk.Button(frame, text="Draw Walls",
+                  command=lambda: self.set_mode("wall")).pack(side=tk.LEFT)
