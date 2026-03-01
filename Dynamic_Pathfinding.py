@@ -83,3 +83,26 @@ class PathfindingApp:
                 )
                 c += 1
             r += 1
+
+
+    def toggle_wall(self, event):
+        r = event.y // CELL_SIZE
+        c = event.x // CELL_SIZE
+
+        if self.edit_mode == "wall":
+            if (r, c) != self.start and (r, c) != self.goal:
+                if self.grid[r][c] == 0:
+                    self.grid[r][c] = 1
+                else:
+                    self.grid[r][c] = 0
+
+        elif self.edit_mode == "start":
+            if (r, c) != self.goal and self.grid[r][c] == 0:
+                self.start = (r, c)
+                self.agent_pos = self.start
+
+        elif self.edit_mode == "goal":
+            if (r, c) != self.start and self.grid[r][c] == 0:
+                self.goal = (r, c)
+
+        self.draw_grid()
